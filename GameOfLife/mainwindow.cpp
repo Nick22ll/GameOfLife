@@ -4,45 +4,36 @@
 #include<QGraphicsItem>
 #include<QGraphicsRectItem>
 #include<QPainter>
-#include<QTime>
+#include<QTimer>
 
-void delay()
-{
-    QTime dieTime= QTime::currentTime().addSecs(1);
-    while (QTime::currentTime() < dieTime)
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-}
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(CellWorld* cw, TimerController* t, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    cellWorld = cw;
+    timer = t;
+
+    timer->connect(timer ,&QTimer::timeout, this, &MainWindow::changeWorld);
+
     ui->setupUi(this);
     //Setup cell dimension
     cellDim = 10;
 
+    //Setup Cell appearence
+    cellPen = QPen(Qt::black, cellDim/10, Qt::SolidLine);
+    cellBrush = QBrush(Qt::white);
+
+
     //Setup Grid in GraphicsScene
-    QPen pen(Qt::black, cellDim/10, Qt::SolidLine);
-    QBrush brush(Qt::white);
     scene = new QGraphicsScene();
-    scene->setSceneRect(0,0, cellWorld.width()*cellDim, cellWorld.height()*cellDim);
+    scene->setSceneRect(0,0, cellWorld->width()*cellDim, cellWorld->height()*cellDim);
     ui->graphicsView->setScene(scene);
 
-    for(int i=0; i<cellWorld.width();i++){
-        for(int j=0;j<cellWorld.height();j++)
-            scene->addRect(i*cellDim,j*cellDim,cellDim,cellDim, pen, brush);
-    }
+    drawWorld();
+    changeWorld();
 
-    for(int i=0; i<1000; i++){
-        QPainter painter;
-        QTransform trans(1,0,0,0,1,0,0,0,1);
-        for(const auto& iter : cellWorld.getChanged()){
-            QGraphicsRectItem* rect = qgraphicsitem_cast<QGraphicsRectItem *>(scene->itemAt(iter.first*cellDim,iter.second*cellDim, trans));
-            cellWorld.getState()[iter.first][iter.second].isAlive() ? rect->setBrush(QBrush(Qt::green)) : rect->setBrush(QBrush(Qt::white));
-        }
-        cellWorld.update();
-
-    }
+    this->show();
 }
 
 MainWindow::~MainWindow()
@@ -51,7 +42,34 @@ MainWindow::~MainWindow()
 }
 
 
+void MainWindow::drawWorld(){
+    for(int i=0; i<cellWorld->width();i++){
+        for(int j=0;j<cellWorld->height();j++)
+            scene->addRect(i*cellDim,j*cellDim,cellDim,cellDim, cellPen, cellBrush);
+    }
+}
+
+void MainWindow::changeWorld(){
+    for(const auto& iter : cellWorld->getChanged()){
+        QGraphicsRectItem* rect = qgraphicsitem_cast<QGraphicsRectItem *>(scene->itemAt(iter.first*cellDim,iter.second*cellDim, ui->graphicsView->transform()));
+        cellWorld->getState()[iter.first][iter.second].isAlive() ? rect->setBrush(QBrush(Qt::green)) : rect->setBrush(QBrush(Qt::white));
+    }
+}
+
 void MainWindow::on_FrameSlider_valueChanged(int value)
 {
     ui->FrameLCD->display(value);
 }
+
+
+
+void MainWindow::on_playPauseButton_clicked()
+{
+    timer->playPause();
+    if(timer->isPaused())
+        ui->playPauseButton->setText("Play");
+    else
+        ui->playPauseButton->setText("Pause");
+
+}
+

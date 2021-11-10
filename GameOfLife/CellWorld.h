@@ -4,6 +4,7 @@
 #include<unordered_set>
 
 #include "cell.h"
+#include<QObject>
 
 using namespace std;
 struct SimpleHash {
@@ -13,7 +14,7 @@ struct SimpleHash {
 };
 
 
-class CellWorld
+class CellWorld : public QObject
 {
 public:
     CellWorld();
@@ -28,6 +29,7 @@ public:
     int height();
     vector<vector<Cell>> getState();
     unordered_set<pair<int,int>, SimpleHash> getChanged();
+
 protected:
     void addChange(int posx, int posy);
 

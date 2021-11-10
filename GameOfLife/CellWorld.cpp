@@ -17,7 +17,7 @@ CellWorld::CellWorld(int rows, int columns) {
 
 void CellWorld::initialize(int rows, int columns)
 {
-    if (world.empty())
+    if (!world.empty())
         world.clear();
     for (int i = 0; i < rows; i++)
         world.push_back(vector<Cell>(columns));
@@ -41,6 +41,15 @@ void CellWorld::initialize(int rows, int columns)
     addChange(19, 22);
     world[20][22].live();
     addChange(20, 22);
+    world[19][19].live();
+    addChange(20, 22);
+
+    world[18][19].live();
+    addChange(20, 22);
+
+    world[23][22].live();
+    addChange(20, 22);
+
 
 }
 

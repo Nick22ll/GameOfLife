@@ -12,14 +12,18 @@ SOURCES += \
     CellWorld.cpp \
     cell.cpp \
     controller.cpp \
+    graphiccell.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    timercontroller.cpp
 
 HEADERS += \
     CellWorld.h \
     cell.h \
     controller.h \
-    mainwindow.h
+    graphiccell.h \
+    mainwindow.h \
+    timercontroller.h
 
 FORMS += \
     mainwindow.ui
