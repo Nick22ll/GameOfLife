@@ -1,39 +1,28 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include<QTransform>
-#include<QGraphicsItem>
-#include<QGraphicsRectItem>
-#include<QPainter>
-#include<QTimer>
+#include<iostream>
 
 
 MainWindow::MainWindow(CellWorld* cw, TimerController* t, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    cellWorld = cw;
-    timer = t;
-
-    timer->connect(timer ,&QTimer::timeout, this, &MainWindow::changeWorld);
-
+    this->setMinimumSize(1280,720);
     ui->setupUi(this);
-    //Setup cell dimension
-    cellDim = 10;
-
-    //Setup Cell appearence
-    cellPen = QPen(Qt::black, cellDim/10, Qt::SolidLine);
-    cellBrush = QBrush(Qt::white);
 
 
-    //Setup Grid in GraphicsScene
-    scene = new QGraphicsScene();
-    scene->setSceneRect(0,0, cellWorld->width()*cellDim, cellWorld->height()*cellDim);
-    ui->graphicsView->setScene(scene);
+    //Setup WorldViewer
+    ui->worldViewer->setCellWorld(cw);
 
-    drawWorld();
-    changeWorld();
+    //Setup Timer
+    timer = t;
+    timer->connect(timer, &QTimer::timeout, ui->worldViewer, &WorldViewer::changeWorld);
+    timer->connect(timer, &QTimer::timeout, this, &MainWindow::updateStatistics);
+    //Setup playPause button
+    ui->playPauseButton->setIcon(QIcon(":/Icons/Icons/play.png"));
 
-    this->show();
+    show();
+
 }
 
 MainWindow::~MainWindow()
@@ -41,35 +30,46 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
-void MainWindow::drawWorld(){
-    for(int i=0; i<cellWorld->width();i++){
-        for(int j=0;j<cellWorld->height();j++)
-            scene->addRect(i*cellDim,j*cellDim,cellDim,cellDim, cellPen, cellBrush);
-    }
-}
-
-void MainWindow::changeWorld(){
-    for(const auto& iter : cellWorld->getChanged()){
-        QGraphicsRectItem* rect = qgraphicsitem_cast<QGraphicsRectItem *>(scene->itemAt(iter.first*cellDim,iter.second*cellDim, ui->graphicsView->transform()));
-        cellWorld->getState()[iter.first][iter.second].isAlive() ? rect->setBrush(QBrush(Qt::green)) : rect->setBrush(QBrush(Qt::white));
-    }
+void MainWindow::updateStatistics(){
+    ui->currentPopulationNumber->setText(QString::number(ui->worldViewer->aliveCells()));
 }
 
 void MainWindow::on_FrameSlider_valueChanged(int value)
 {
     ui->FrameLCD->display(value);
+
 }
-
-
 
 void MainWindow::on_playPauseButton_clicked()
 {
     timer->playPause();
-    if(timer->isPaused())
-        ui->playPauseButton->setText("Play");
+    if(timer->isPaused()){
+        ui->playPauseButton->setIcon(QIcon(":/Icons/Icons/play.png"));
+    }
     else
-        ui->playPauseButton->setText("Pause");
+        ui->playPauseButton->setIcon(QIcon(":/Icons/Icons/pause.png"));
+}
+
+
+void MainWindow::on_FrameSlider_sliderReleased()
+{
+    timer->setSpeed(1/ui->FrameLCD->value()*1000);
+}
+
+
+void MainWindow::on_resetButton_clicked()
+{
+    timer->setPause();
+    if(timer->isPaused())
+        ui->playPauseButton->setIcon(QIcon(":/Icons/Icons/play.png"));
+    ui->worldViewer->resetWorld();
 
 }
+
+
+void MainWindow::on_modifyCheckBox_toggled(bool checked)
+{
+    ui->worldViewer->setModifyFlag(checked);
+}
+
 

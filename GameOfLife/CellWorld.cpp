@@ -49,21 +49,37 @@ void CellWorld::initialize(int rows, int columns)
 
     world[23][22].live();
     addChange(20, 22);
-
+    aliveCells+=11;
 
 }
 
+int CellWorld::alivePopulation(){
+    return aliveCells;
+}
 
+bool CellWorld::isAlive(int row, int col){
+    if(valid_position(row,col))
+        return world[row][col].isAlive();
+    return false;
+}
 
 void CellWorld::clear()
 {
+    changed.clear();
     this->initialize(world.size(), world[0].size());
 }
 
 void CellWorld::modify(int posx, int posy)
 {
     if (valid_position(posx, posy)) {
-        world[posx][posy].isAlive() ? world[posx][posy].die() : world[posx][posy].live();
+        if(world[posx][posy].isAlive()){
+            world[posx][posy].die();
+            aliveCells--;
+        }
+        else{
+             world[posx][posy].live();
+             aliveCells++;
+        }
         addChange(posx, posy);
     }
 }
@@ -80,10 +96,12 @@ void CellWorld::update()
         int n_neighbors = neighborsSum(posx, posy);
         if (world[posx][posy].isAlive() && (n_neighbors >= 4 || n_neighbors <= 1)) {  //die from loneliness or overpopulation
             newWorld[posx][posy].die();
+            aliveCells--;
             addChange(posx, posy);
         }
         if (!world[posx][posy].isAlive() && n_neighbors == 3) {  //live from 3 neighbors
             newWorld[posx][posy].live();
+            aliveCells++;
             addChange(posx, posy);
         }
     }

@@ -10,18 +10,16 @@ CONFIG += c++11
 
 SOURCES += \
     CellWorld.cpp \
+    WorldViewer.cpp \
     cell.cpp \
-    controller.cpp \
-    graphiccell.cpp \
     main.cpp \
     mainwindow.cpp \
     timercontroller.cpp
 
 HEADERS += \
     CellWorld.h \
+    WorldViewer.h \
     cell.h \
-    controller.h \
-    graphiccell.h \
     mainwindow.h \
     timercontroller.h
 
@@ -32,3 +30,10 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    Icons/pause.png \
+    Icons/play.png
+
+RESOURCES += \
+    resources.qrc

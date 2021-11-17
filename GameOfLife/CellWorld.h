@@ -27,6 +27,8 @@ public:
     int neighborsSum(int posx, int posy);
     int width();
     int height();
+    int alivePopulation();
+    bool isAlive(int row, int col);
     vector<vector<Cell>> getState();
     unordered_set<pair<int,int>, SimpleHash> getChanged();
 

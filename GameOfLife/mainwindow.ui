@@ -6,30 +6,92 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1292</width>
-    <height>648</height>
+    <width>1280</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
+  <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0" colspan="3">
-     <widget class="QGraphicsView" name="graphicsView"/>
+    <item row="0" column="0" colspan="8">
+     <widget class="WorldViewer" name="worldViewer">
+      <property name="minimumSize">
+       <size>
+        <width>640</width>
+        <height>360</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
     </item>
     <item row="1" column="0">
      <widget class="QSlider" name="FrameSlider">
+      <property name="minimum">
+       <number>1</number>
+      </property>
       <property name="maximum">
-       <number>100</number>
+       <number>50</number>
       </property>
       <property name="value">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
+    </item>
+    <item row="1" column="5">
+     <widget class="QPushButton" name="resetButton">
+      <property name="text">
+       <string>Reset</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="7">
+     <widget class="QPushButton" name="playPauseButton">
+      <property name="minimumSize">
+       <size>
+        <width>40</width>
+        <height>40</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>40</width>
+        <height>40</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="4">
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
     </item>
     <item row="1" column="1">
      <widget class="QLCDNumber" name="FrameLCD">
@@ -41,11 +103,124 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="2">
-     <widget class="QPushButton" name="playPauseButton">
-      <property name="text">
-       <string>Play</string>
+    <item row="1" column="6">
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="3">
+     <widget class="QCheckBox" name="modifyCheckBox">
+      <property name="text">
+       <string>Modify</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="8" colspan="2">
+     <widget class="QGroupBox" name="statisticsBox">
+      <property name="minimumSize">
+       <size>
+        <width>200</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="title">
+       <string>Statistics</string>
+      </property>
+      <widget class="QLabel" name="generationLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>71</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Generation:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="currentPopulationLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>40</y>
+         <width>111</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Current Population:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="overallPopulationlabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>60</y>
+         <width>111</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Overall Population:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="generationNumberLabel">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>20</y>
+         <width>91</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="currentPopulationNumber">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>40</y>
+         <width>91</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="overallPopulationNumber">
+       <property name="geometry">
+        <rect>
+         <x>120</x>
+         <y>60</y>
+         <width>71</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -55,13 +230,20 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1292</width>
+     <width>1280</width>
      <height>20</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>WorldViewer</class>
+   <extends>QGraphicsView</extends>
+   <header>worldviewer.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

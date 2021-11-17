@@ -10,6 +10,7 @@ public:
     void loop();
     void setSpeed(int ms);
     void playPause();
+    void setPause();
     bool isPaused();
 
 private:
