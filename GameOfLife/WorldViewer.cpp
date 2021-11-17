@@ -24,6 +24,11 @@ WorldViewer::WorldViewer(QWidget* parent)
 int WorldViewer::aliveCells(){
     return cellWorld->alivePopulation();
 }
+
+int WorldViewer::overallDeads(){
+    return cellWorld->overallDeads();
+}
+
 void WorldViewer::setCellWorld(CellWorld* cw){
     cellWorld = cw;
 
@@ -32,7 +37,7 @@ void WorldViewer::setCellWorld(CellWorld* cw){
     scene->setSceneRect(0,0,cw->width()*cellDim, cw->height()*cellDim);
     setScene(scene);
     drawWorldGrid();
-    changeWorld();
+    drawAliveWorld();
 }
 
 void WorldViewer::setModifyFlag(bool b){
@@ -46,10 +51,25 @@ void WorldViewer::setModifyFlag(bool b){
         deadCellPen = QPen(Qt::black, 0, Qt::SolidLine);
     }
     drawWorldGrid();
-    changeWorld();
+    drawAliveWorld();
+}
+
+void WorldViewer::setAgingFlag(bool b){
+    agingFlag=b;
+    if(!b)
+        antiAgeWorld();
+}
+
+void WorldViewer::drawAliveWorld(){
+    for(const auto& iter : cellWorld->getAliveCells()){
+        QGraphicsRectItem* rect = qgraphicsitem_cast<QGraphicsRectItem *>(scene()->itemAt(iter.first*cellDim,iter.second*cellDim, transform()));
+        rect->setBrush(liveCellBrush);
+        rect->setPen(liveCellPen);
+    }
 }
 
 void WorldViewer::drawWorldGrid(){
+    scene()->clear();
     for(int i=0; i<cellWorld->width();i++){
         for(int j=0;j<cellWorld->height();j++)
             scene()->addRect(i*cellDim,j*cellDim,cellDim,cellDim, deadCellPen, deadCellBrush);
@@ -59,22 +79,57 @@ void WorldViewer::drawWorldGrid(){
 void WorldViewer::changeWorld(){
     for(const auto& iter : cellWorld->getChanged()){
         QGraphicsRectItem* rect = qgraphicsitem_cast<QGraphicsRectItem *>(scene()->itemAt(iter.first*cellDim,iter.second*cellDim, transform()));
-        if(cellWorld->getState()[iter.first][iter.second].isAlive()){
+        if(cellWorld->getState()[iter.first][iter.second].isAlive()){           
             rect->setBrush(liveCellBrush);
             rect->setPen(liveCellPen);
         }
         else{
             rect->setBrush(deadCellBrush);
             rect->setPen(deadCellPen);
-
         }
     }
 }
 
+void WorldViewer::agingWorld(){
+    for(const auto& iter : cellWorld->getAliveCells()){
+        QGraphicsRectItem* rect = qgraphicsitem_cast<QGraphicsRectItem *>(scene()->itemAt(iter.first*cellDim,iter.second*cellDim, transform()));
+        int age = cellWorld->getState()[iter.first][iter.second].getAge();
+        if(age <= 100){
+            rect->setBrush(QBrush(QColor(0,255-(age*2),0)));
+            rect->setPen(QPen(QColor(0,255-(age*2),0)));
+        }
+        else{
+            rect->setBrush(QBrush(Qt::red));
+            rect->setPen(QPen(Qt::red));
+        }
+    }
+}
+
+void WorldViewer::antiAgeWorld(){
+    for(const auto& iter : cellWorld->getAliveCells()){
+        QGraphicsRectItem* rect = qgraphicsitem_cast<QGraphicsRectItem *>(scene()->itemAt(iter.first*cellDim,iter.second*cellDim, transform()));
+        rect->setBrush(liveCellBrush);
+        rect->setPen(liveCellPen);
+    }
+}
 void WorldViewer::resetWorld(){
-    cellWorld->clear();
-    drawWorldGrid();
-    changeWorld();
+    QMessageBox msgBox;
+    msgBox.setText("You are resetting the world!");
+    msgBox.setInformativeText("Are you sure?");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::Yes);
+    int ret = msgBox.exec();
+    switch(ret){
+        case QMessageBox::Yes:
+            cellWorld->clear();
+            drawWorldGrid();
+            changeWorld();
+            break;
+       case QMessageBox::No:
+            break;
+       default:
+            break;
+    }
 }
 
 void WorldViewer::stretchToBorder(){

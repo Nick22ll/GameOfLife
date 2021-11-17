@@ -2,5 +2,6 @@
     <qresource prefix="/Icons">
         <file>Icons/pause.png</file>
         <file>Icons/play.png</file>
+        <file>Icons/reset.png</file>
     </qresource>
 </RCC>

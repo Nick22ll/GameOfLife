@@ -27,34 +27,47 @@ void CellWorld::initialize(int rows, int columns)
 
     world[20][20].live();
     addChange(20, 20);
+    aliveCells.insert({20,20});
     world[20][21].live();
     addChange(20, 21);
+    aliveCells.insert({20,21});
     world[21][20].live();
     addChange(21, 20);
+    aliveCells.insert({21,20});
     world[22][21].live();
     addChange(22, 21);
+    aliveCells.insert({22,21});
     world[23][20].live();
     addChange(23, 20);
+    aliveCells.insert({23,20});
     world[19][21].live();
     addChange(19, 21);
+    aliveCells.insert({19,21});
     world[19][22].live();
     addChange(19, 22);
+    aliveCells.insert({19,22});
     world[20][22].live();
     addChange(20, 22);
+    aliveCells.insert({20,22});
     world[19][19].live();
-    addChange(20, 22);
-
+    addChange(19, 19);
+    aliveCells.insert({19,19});
     world[18][19].live();
-    addChange(20, 22);
+    addChange(18, 19);
+    aliveCells.insert({18, 19});
 
     world[23][22].live();
-    addChange(20, 22);
-    aliveCells+=11;
+    addChange(23, 22);
+    aliveCells.insert({23,22});
 
 }
 
 int CellWorld::alivePopulation(){
-    return aliveCells;
+    return aliveCells.size();
+}
+
+int CellWorld::overallDeads(){
+    return deadCellCounter;
 }
 
 bool CellWorld::isAlive(int row, int col){
@@ -66,6 +79,7 @@ bool CellWorld::isAlive(int row, int col){
 void CellWorld::clear()
 {
     changed.clear();
+    aliveCells.clear();
     this->initialize(world.size(), world[0].size());
 }
 
@@ -74,11 +88,12 @@ void CellWorld::modify(int posx, int posy)
     if (valid_position(posx, posy)) {
         if(world[posx][posy].isAlive()){
             world[posx][posy].die();
-            aliveCells--;
+            deadCellCounter++;
+            aliveCells.erase({posx, posy});
         }
         else{
              world[posx][posy].live();
-             aliveCells++;
+             aliveCells.insert({posx, posy});
         }
         addChange(posx, posy);
     }
@@ -90,22 +105,37 @@ void CellWorld::update()
     unordered_set<pair<int,int>, SimpleHash> oldChanged = changed;
     changed.clear();
 
-    for (const auto& elem : oldChanged) {
+    //Aging of the curent population
+    if(agingFlag){
+        for (const auto& elem : aliveCells) {
+            int posx = elem.first;
+            int posy = elem.second;
+            newWorld[posx][posy].aging();
+        }
+    }
+
+    //Calculate the births and deaths
+    for (const auto& elem : oldChanged){
         int posx = elem.first;
         int posy = elem.second;
         int n_neighbors = neighborsSum(posx, posy);
         if (world[posx][posy].isAlive() && (n_neighbors >= 4 || n_neighbors <= 1)) {  //die from loneliness or overpopulation
             newWorld[posx][posy].die();
-            aliveCells--;
+            deadCellCounter++;
+            aliveCells.erase({posx, posy});
             addChange(posx, posy);
         }
         if (!world[posx][posy].isAlive() && n_neighbors == 3) {  //live from 3 neighbors
             newWorld[posx][posy].live();
-            aliveCells++;
+            aliveCells.insert({posx, posy});
             addChange(posx, posy);
         }
     }
     world = newWorld;
+}
+
+void CellWorld::setAging(bool b){
+    agingFlag = b;
 }
 
 int CellWorld::neighborsSum(int posx, int posy)
@@ -133,6 +163,8 @@ vector<vector<Cell>> CellWorld::getState()
     return world;
 }
 
+
+
 int CellWorld::width() {
     return dimensions[0];
 }
@@ -159,4 +191,8 @@ void CellWorld::addChange(int posx, int posy) {
 
 unordered_set<pair<int,int>, SimpleHash> CellWorld::getChanged(){
     return changed;
+}
+
+unordered_set<pair<int,int>, SimpleHash> CellWorld::getAliveCells(){
+    return aliveCells;
 }

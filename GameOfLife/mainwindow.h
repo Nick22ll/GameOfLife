@@ -27,10 +27,10 @@ public:
 private slots:
     void on_FrameSlider_valueChanged(int value);
     void on_playPauseButton_clicked();
-    void on_FrameSlider_sliderReleased();
     void on_resetButton_clicked();
 
     void on_modifyCheckBox_toggled(bool checked);
+    void on_agingBox_toggled(bool checked);
 
 private:
     //Timer variables

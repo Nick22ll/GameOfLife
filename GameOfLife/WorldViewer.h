@@ -10,6 +10,7 @@
 #include<QMouseEvent>
 #include<QScrollBar>
 #include<QSizePolicy>
+#include<QMessageBox>
 
 class WorldViewer : public QGraphicsView
 {
@@ -17,11 +18,17 @@ public:
     WorldViewer(QWidget* parent = nullptr);
     void setCellWorld(CellWorld* cw);
     void drawWorldGrid();
+    void drawAliveWorld();
     int aliveCells();
+    int overallDeads();
     void changeWorld();
+    void agingWorld();
+    void antiAgeWorld();  //Restores the aspect of aged cell to a new birth cell
     void stretchToBorder();
     void resetWorld();
     void setModifyFlag(bool b);
+    void setAgingFlag(bool b);
+
 private:
     //Events Handler
     virtual void mouseMoveEvent(QMouseEvent *event);
@@ -39,7 +46,7 @@ private:
     //Events Variables
     bool pan;
     QPointF panStart;
-
+    bool agingFlag = true;
     bool enabledModify = false;
 
     //Scale Controll Variables
@@ -53,6 +60,8 @@ private:
     int cellDim;
     QBrush deadCellBrush, liveCellBrush;
     QPen deadCellPen, liveCellPen;
+
+
 
 };
 

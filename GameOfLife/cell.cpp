@@ -18,11 +18,13 @@ int Cell::getAge()
 void Cell::die()
 {
     this->alive = false;
+
 }
 
 void Cell::live()
 {
     this->alive = true;
+    age = 0;
 }
 
 bool Cell::isAlive() {
