@@ -1,13 +1,13 @@
 #include "mainwindow.h"
 #include "CellWorld.h"
-#include "controller.h"
 #include <QApplication>
 #include"timercontroller.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    CellWorld cellWorld(100,100);
+    CellWorld cellWorld;
+    cellWorld.loadFromFile("InitialConfiguration/GOF(60x40).txt", &cellWorld);
 
     TimerController timer(&cellWorld);
 

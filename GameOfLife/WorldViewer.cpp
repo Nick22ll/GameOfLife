@@ -29,6 +29,10 @@ int WorldViewer::overallDeads(){
     return cellWorld->overallDeads();
 }
 
+int WorldViewer::updateTime(){
+    return cellWorld->updateTime();
+}
+
 void WorldViewer::setCellWorld(CellWorld* cw){
     cellWorld = cw;
 
@@ -36,7 +40,6 @@ void WorldViewer::setCellWorld(CellWorld* cw){
     QGraphicsScene* scene = new QGraphicsScene();
     scene->setSceneRect(0,0,cw->width()*cellDim, cw->height()*cellDim);
     setScene(scene);
-    drawWorldGrid();
     drawAliveWorld();
 }
 
@@ -50,7 +53,6 @@ void WorldViewer::setModifyFlag(bool b){
         liveCellPen = QPen(Qt::green, 0, Qt::SolidLine);
         deadCellPen = QPen(Qt::black, 0, Qt::SolidLine);
     }
-    drawWorldGrid();
     drawAliveWorld();
 }
 
@@ -61,6 +63,7 @@ void WorldViewer::setAgingFlag(bool b){
 }
 
 void WorldViewer::drawAliveWorld(){
+    drawWorldGrid();
     for(const auto& iter : cellWorld->getAliveCells()){
         QGraphicsRectItem* rect = qgraphicsitem_cast<QGraphicsRectItem *>(scene()->itemAt(iter.first*cellDim,iter.second*cellDim, transform()));
         rect->setBrush(liveCellBrush);
@@ -73,20 +76,6 @@ void WorldViewer::drawWorldGrid(){
     for(int i=0; i<cellWorld->width();i++){
         for(int j=0;j<cellWorld->height();j++)
             scene()->addRect(i*cellDim,j*cellDim,cellDim,cellDim, deadCellPen, deadCellBrush);
-    }
-}
-
-void WorldViewer::changeWorld(){
-    for(const auto& iter : cellWorld->getChanged()){
-        QGraphicsRectItem* rect = qgraphicsitem_cast<QGraphicsRectItem *>(scene()->itemAt(iter.first*cellDim,iter.second*cellDim, transform()));
-        if(cellWorld->getState()[iter.first][iter.second].isAlive()){           
-            rect->setBrush(liveCellBrush);
-            rect->setPen(liveCellPen);
-        }
-        else{
-            rect->setBrush(deadCellBrush);
-            rect->setPen(deadCellPen);
-        }
     }
 }
 
@@ -112,18 +101,31 @@ void WorldViewer::antiAgeWorld(){
         rect->setPen(liveCellPen);
     }
 }
+
+void WorldViewer::emptyWorld(int rows, int columns){
+    cellWorld->initialize(rows, columns);
+    scene()->clear();
+    scene()->setSceneRect(0,0,cellWorld->width()*cellDim, cellWorld->height()*cellDim);
+    stretchToBorder();
+    drawWorldGrid();
+}
+
+void WorldViewer::randomWorld(int rows, int columns){
+    cellWorld->initialize(rows, columns, randomAlivePopulation(rows, columns));
+    scene()->clear();
+    scene()->setSceneRect(0,0,cellWorld->width()*cellDim, cellWorld->height()*cellDim);
+    stretchToBorder();
+    drawAliveWorld();
+}
+
 void WorldViewer::resetWorld(){
-    QMessageBox msgBox;
-    msgBox.setText("You are resetting the world!");
-    msgBox.setInformativeText("Are you sure?");
-    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    msgBox.setDefaultButton(QMessageBox::Yes);
+    QMessageBox msgBox(QMessageBox::Icon::Warning , "World Reset", "You are resetting the world!\nAre you sure?", QMessageBox::Yes | QMessageBox::No,  this);
+    msgBox.setDefaultButton(QMessageBox::No);
     int ret = msgBox.exec();
     switch(ret){
         case QMessageBox::Yes:
-            cellWorld->clear();
-            drawWorldGrid();
-            changeWorld();
+            cellWorld->reset();;
+            drawAliveWorld();
             break;
        case QMessageBox::No:
             break;
@@ -137,6 +139,18 @@ void WorldViewer::stretchToBorder(){
     scale(width()/sceneRect().width(), width()/sceneRect().width());
 }
 
+
+void WorldViewer::saveWorld(string filename){
+    cellWorld->saveToFile(cellWorld, filename);
+}
+
+void WorldViewer::loadWorld(string filename){
+    cellWorld->loadFromFile(filename, cellWorld);
+    scene()->clear();
+    scene()->setSceneRect(0,0,cellWorld->width()*cellDim, cellWorld->height()*cellDim);
+    stretchToBorder();
+    drawAliveWorld();
+}
 
 void WorldViewer::mouseMoveEvent(QMouseEvent *event){
     if (pan && !enabledModify)
