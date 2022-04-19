@@ -1,5 +1,6 @@
 # GameOfLife
 GameOfLife is a graphical user interface that gives you the control on the simulation of The Game of Life.
+
 The Game of Life is a cellular automaton devised by the British mathematician John Horton Conway in 1970. It is a zero-player game, meaning that its evolution is determined by its initial state, requiring no further input. One interacts with the Game of Life by creating an initial configuration and observing how it evolves. It is Turing complete and can simulate a universal constructor or any other Turing machine.
 
 ## Prerequisites
@@ -34,11 +35,14 @@ On the right portion of the windows there are usefull statistics about the curre
 
 ### Save and Load
 Through the **Save** button it's possible to save the current state of the simulation. 
+
 If you want load a state previously saved try the **Load** button: there are also some interesting pre-set states!
 
 ### Create New Worlds
 To create a new world open the top left **File** menù: you can create an empty world or a random populated one.
+
 You can choose the size of the world through the appropiate window.
+
 ![size.png](images/size.png)
 
 ## Keyboard Shortcuts and Camera
