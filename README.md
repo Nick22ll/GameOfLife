@@ -6,7 +6,6 @@ The Game of Life is a cellular automaton devised by the British mathematician Jo
 ## Prerequisites
 Library | Version
 ------- | -------
-
 [Qt C++](https://doc.qt.io/qt-5/reference-overview.html) | ^5.0.3
 
 ## Install
@@ -25,10 +24,10 @@ In this section are listed all the functionalities available in GameOfLife.
 On the lower right corner there are the buttons to play/pause/resume the simulation and to reset the cell world to the initial state.
 
 ### FPS Control
-On the lower left corner there is a slider with which you can control the simulation speed(FPS = frame per second).
+On the lower left corner there is a slider with which you can control the simulation speed (FPS = frame per second).
 
 ### Modify and Aging
-Directly on the right of the FPS slider there are some check boxes: check **Modify** to be able to modify the cell world with a mouse click or check **Aging** to see cells age(green=new born to red=old).
+Directly on the right of the FPS slider there are some check boxes: check **Modify** to be able to modify the cell world with a mouse click or check **Aging** to see cells age (green=new born to red=old).
 
 ### Statistics
 On the right portion of the windows there are usefull statistics about the current simulation.
